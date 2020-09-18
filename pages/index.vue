@@ -20,14 +20,15 @@ export default {
     Logo
   },
   mounted() {
-    const server = "your server"
+    const server = "ws://gateway-1.qonver.com:8188/gateway"
+    const dmoeServer = "wss://janus.conf.meetecho.com/ws"
     const opaqueId = "streamingtest-"+Janus.randomString(12);
     let streaming = null;
 
     Janus.init({debug: "all", callback: function() {
 			let janus = new Janus(
 				{
-					server: server,
+					server: server, //dmoeServer,
 					success: function() {
 						janus.attach(
 							{
@@ -52,6 +53,9 @@ export default {
 												success: function(jsep) {
 													var body = { "request": "start" };
 													streaming.send({"message": body, "jsep": jsep});
+                          // watch
+                          // var body2 = { "request": "watch", id: 2 };
+                          // streaming.send({"message": body2});
 												},
 												error: function(error) {
 													console.log("WebRTC error... " + JSON.stringify(error));
@@ -68,16 +72,19 @@ export default {
                         
                   let video = document.getElementById('video')
                   // video.srcObject = stream;// webinar or p2p
-                  // console.log("rendering", stream)
+                  console.log("rendering", stream)
                   Janus.attachMediaStream(video, stream);
                   
 								}
 							});
 					},
 					error: function(error) {
+            console.log(error);
+            /*
 						bootbox.alert(error, function() {
 							window.location.reload();
 						});
+            */
 					}
         });
         
